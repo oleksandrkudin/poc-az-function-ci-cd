@@ -20,12 +20,6 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v3
-      - name: az login
-        run: |
-          az login --service-principal --username "${{ vars.AZ_CLIENT_ID }}"  --password "${{ secrets.AZ_CLIENT_SECRET }}" --tenant "${{ vars.AZ_TENANT }}"
-      - name: az subscription
-        run: |
-          az account set --subscription ${{ vars.AZ_SUBSCRIPTION_ID }}
       - name: terraform init
         working-directory: ${{ env.CODE_PATH }}
         run: |
