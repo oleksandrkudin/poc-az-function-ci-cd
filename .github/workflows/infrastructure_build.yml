@@ -26,15 +26,14 @@ jobs:
       - name: az subscription
         run: |
           az account set --subscription ${{ vars.AZ_SUBSCRIPTION_ID }}
-      - name: set working dir
-        run: |
-          cd ${{ env.CODE_PATH }}
       - name: terraform init
+        working-directory: ${{ env.CODE_PATH }}
         run: |
           terraform init -backend-config=resource_group_name=${{ vars.TF_BACKEND_RESOURCE_GROUP_NAME }} \
             -backend-config=storage_account_name=${{ vars.TF_BACKEND_STORAGE_ACCOUNT_NAME }} \
             -backend-config=container_name=${{ vars.TF_BACKEND_CONTAINER_NAME }}  -backend-config=key=${{ vars.TF_BACKEND_KEY }}
       - name: terraform plan
+        working-directory: ${{ env.CODE_PATH }}
         run: |
           echo "Run terraform plan"
           terraform plan
