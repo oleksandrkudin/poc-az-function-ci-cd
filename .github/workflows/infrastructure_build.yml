@@ -20,6 +20,9 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v3
+      - name: env
+        run: |
+          env
       - name: terraform init
         working-directory: ${{ env.CODE_PATH }}
         env:
