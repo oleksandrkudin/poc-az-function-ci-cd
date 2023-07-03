@@ -1,5 +1,5 @@
 resource "azurerm_linux_function_app" "example" {
-  name                = format("%s-%s", "func")
+  name                = format("%s-%s", var.name_prefix, "func")
   resource_group_name = azurerm_resource_group.rg.name
   location            = var.location
 
