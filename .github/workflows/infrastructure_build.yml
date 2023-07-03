@@ -18,6 +18,8 @@ jobs:
     environment:
       name: dev
     steps:
+      - name: checkout
+        uses: actions/checkout@v3
       - name: az login
         run: |
           az login --service-principal --username "${{ vars.AZ_CLIENT_ID }}"  --password "${{ secrets.AZ_CLIENT_SECRET }}" --tenant "${{ vars.AZ_TENANT }}"
