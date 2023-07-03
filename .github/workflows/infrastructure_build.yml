@@ -1,0 +1,36 @@
+name: 'infrastructure build'
+run-name: 'infrastructure build'  # check if possible to path that if filtered in triggers
+on:
+  push:
+    paths:
+      - 'infrastructure/src/**'
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+jobs:
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    environment:
+      name: dev
+    steps:
+      - name: az login
+        run: |
+          echo "Logon to Azure"
+          az login --service-principal --username ${{ env.AZ_CLIENT_ID }}  --password ${{ secrets.AZ_CLIENT_SECRET }} --tenant ${{ env.AZ_TENANT }}
+      - name: az subscription
+        run: |
+          echo "Set Azure subscription"
+          az account set --subscription ${{ env.AZ_SUBSCRIPTION_ID }}
+      - name: terraform init
+        run: |
+          echo "Run terraform init"
+          terraform init -backend-config=resource_group_name=${{ TF_BACKEND_RESOURCE_GROUP_NAME }} \
+            -backend-config=storage_account_name=${{ env.TF_BACKEND_STORAGE_ACCOUNT_NAME }} 
+            -backend-config=container_name=${{ env.TF_BACKEND_CONTAINER_NAME }}  -backend-config=key=${{ env.TF_BACKEND_KEY }}
+      - name: terraform plan
+        run: |
+          echo "Run terraform plan"
+          terraform plan
