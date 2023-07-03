@@ -1,9 +1,11 @@
 name: 'infrastructure build'
 run-name: 'infrastructure build'  # check if possible to path that if filtered in triggers
+env:
+  CODE_PATH: infrastructure/src
 on:
   push:
     paths:
-      - 'infrastructure/src/**'
+      - '${{ env.CODE_PATH }}/**'
     branches:
       - main
   pull_request:
@@ -22,6 +24,9 @@ jobs:
       - name: az subscription
         run: |
           az account set --subscription ${{ vars.AZ_SUBSCRIPTION_ID }}
+      - name: set working dir
+        run: |
+          cd ${{ env.CODE_PATH }}
       - name: terraform init
         run: |
           terraform init -backend-config=resource_group_name=${{ vars.TF_BACKEND_RESOURCE_GROUP_NAME }} \
