@@ -6,6 +6,7 @@ on:
   workflow_run:
     workflows:
       - 'infrastructure build'
+    types: [requested]  # not triggered so far 
     # necessary to specify - otherwise not triggered
     branches:
       - main
