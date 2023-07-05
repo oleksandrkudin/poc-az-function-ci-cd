@@ -27,4 +27,5 @@ jobs:
         uses: Azure/functions-action@v1
         with:
           app-name: poc-azfunccicd-func
-          package: az_function.1.0.0.nupkg
+          package: ./
+          # package: az_function.1.0.0.nupkg

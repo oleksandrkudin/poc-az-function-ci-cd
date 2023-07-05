@@ -27,11 +27,17 @@ jobs:
       - name: build
         run: dotnet build --configuration Release --no-restore
       - name: test
-        run: dotnet test --no-restore --verbosity normal
-      - name: pack
-        run: dotnet pack --configuration Release
+        run: dotnet test --no-restore --verbosity normal --output ./output
       - name: artifact
         uses: actions/upload-artifact@v3
         with:
           name: package
-          path: ${{ env.CODE_PATH }}/bin/Release/*.nupkg
+          path: ${{ env.CODE_PATH }}/output/*
+          
+      # - name: pack
+      #   run: dotnet pack --configuration Release
+      # - name: artifact
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: package
+      #     path: ${{ env.CODE_PATH }}/bin/Release/*.nupkg
