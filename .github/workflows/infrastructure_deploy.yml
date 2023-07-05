@@ -1,0 +1,23 @@
+name: 'infrastructure deploy'
+run-name: 'infrastructure deploy'
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'infrastructure/src/**'
+    branches:
+      - main
+      - feature/1-add-infrastructure-and-workflow
+jobs:
+  deploy:
+    environment:
+      name: dev
+    runs-on: ubuntu-latest
+    steps:
+      - name: artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: terraform-plan
+      - name: terraform apply
+        run: |
+          terraform apply -auto-approve -input=false terraform.tfplan
