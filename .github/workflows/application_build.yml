@@ -1,5 +1,5 @@
-name: application build
-run-name: application build
+name: 'application build'
+run-name: 'application build'
 env:
   CODE_PATH: application/src/az_function
 on:
