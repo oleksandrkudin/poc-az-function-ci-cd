@@ -13,7 +13,7 @@ on:
     # necessary to specify - otherwise not triggered
     branches:
       - main
-      - bugfix/**  # TODO: uncomment. Commented for testing workflows in PR
+      - 'bugfix/**'  # TODO: uncomment. Commented for testing workflows in PR
 
 # how to set dependency on build workflow, so it run first, produce artifact and only after that run deploy workflow
 jobs:
@@ -33,13 +33,13 @@ jobs:
         with:
           terraform_version: 1.2.5  # TODO: Move terraform version to repository variable to be global across all workflows
       - name: terraform apply
-        working-directory: ${{ env.CODE_PATH }}
+        #working-directory: ${{ env.CODE_PATH }}
         env:
           ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
           ARM_CLIENT_ID: ${{ vars.ARM_CLIENT_ID }}
           ARM_SUBSCRIPTION_ID: ${{ vars.ARM_SUBSCRIPTION_ID }}
           ARM_TENANT_ID: ${{ vars.ARM_TENANT_ID }}
-          TF_VAR_location: ${{ vars.TF_VAR_LOCATION }}
-          TF_VAR_name_prefix: ${{ vars.TF_VAR_NAME_PREFIX }}
+          # TF_VAR_location: ${{ vars.TF_VAR_LOCATION }}
+          # TF_VAR_name_prefix: ${{ vars.TF_VAR_NAME_PREFIX }}
         run: |
           terraform apply -auto-approve -input=false terraform.tfplan
