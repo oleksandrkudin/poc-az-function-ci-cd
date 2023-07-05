@@ -32,6 +32,7 @@ jobs:
         with:
           workflow: infrastructure_build.yml
           name: terraform-plan
+          path: ${{ env.CODE_PATH }}
       - uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: 1.2.5  # TODO: Move terraform version to repository variable to be global across all workflows
