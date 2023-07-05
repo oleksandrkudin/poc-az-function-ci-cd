@@ -2,7 +2,7 @@
   "profiles": {
     "az_function": {
       "commandName": "Project",
-      "commandLineArgs": "--port 7109",
+      "commandLineArgs": "--port 7279",
       "launchBrowser": false
     }
   }
