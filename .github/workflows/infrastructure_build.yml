@@ -7,6 +7,7 @@ on:
     # Repository is multi component, different types -> so should be different build and release pipelines
     paths:
       - 'infrastructure/src/**'
+      - '.github/workflows/**'  # TODO: delete after testing in branch
     branches:
       - main
       - bugfix/**  # TODO: uncomment. Commented for testing workflows in PR. infrastructure_deploy is not triggered yet
