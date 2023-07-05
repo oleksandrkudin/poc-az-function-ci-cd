@@ -53,8 +53,11 @@ jobs:
         run: |
           echo "Run terraform plan"
           terraform plan -out terraform.tfplan
+      # How to put several files in the same artifact?
       - name: artifact
         uses: actions/upload-artifact@v3
         with:
           name: terraform-plan
-          path: ${{ env.CODE_PATH }}/terraform.tfplan
+          path: | 
+            ${{ env.CODE_PATH }}/terraform.tfplan
+            ${{ env.CODE_PATH }}/.terraform.lock.hcl
