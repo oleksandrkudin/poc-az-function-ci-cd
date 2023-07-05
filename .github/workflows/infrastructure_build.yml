@@ -4,6 +4,7 @@ env:
   CODE_PATH: infrastructure/src
 on:
   push:
+    # Repository is multi component, different types -> so should be different build and release pipelines
     paths:
       - 'infrastructure/src/**'
     branches:
@@ -43,4 +44,10 @@ jobs:
           TF_VAR_name_prefix: ${{ vars.TF_VAR_NAME_PREFIX }}
         run: |
           echo "Run terraform plan"
-          terraform plan
+          terraform plan -out terraform.tfplan
+      - name: artifact
+        working-directory: ${{ env.CODE_PATH }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: terraform-plan
+          path: terraform.tfplan
