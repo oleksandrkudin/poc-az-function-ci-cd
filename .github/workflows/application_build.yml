@@ -25,15 +25,15 @@ jobs:
       - name: dependencies
         run: dotnet restore
       - name: build
-        run: dotnet build --configuration Release --no-restore
+        run: dotnet build --configuration Release --no-restore --output ./output
       - name: test
-        run: dotnet test --no-restore --verbosity normal --output ./output
+        run: dotnet test --no-restore --verbosity normal
       - name: artifact
         uses: actions/upload-artifact@v3
         with:
           name: package
           path: ${{ env.CODE_PATH }}/output/*
-          
+
       # - name: pack
       #   run: dotnet pack --configuration Release
       # - name: artifact
