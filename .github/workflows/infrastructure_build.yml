@@ -9,6 +9,7 @@ on:
       - 'infrastructure/src/**'
     branches:
       - main
+      - bugfix/**  # TODO: uncomment. Commented for testing workflows in PR. infrastructure_deploy is not triggered yet
   pull_request:
     paths:
       - .github/workflows/**  # TODO: temporary to test workflows on PR level, must be deleted after workflows are tested
