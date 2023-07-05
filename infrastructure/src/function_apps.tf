@@ -8,6 +8,7 @@ resource "azurerm_linux_function_app" "example" {
   service_plan_id            = azurerm_service_plan.function_plan.id
 
   https_only = true
+  functions_extension_version = "~4"
 
   site_config {
     application_stack {
