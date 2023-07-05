@@ -7,13 +7,10 @@ on:
     # Repository is multi component, different types -> so should be different build and release pipelines
     paths:
       - 'infrastructure/src/**'
-      - '.github/workflows/**'  # TODO: delete after testing in branch
     branches:
       - main
-      - bugfix/**  # TODO: uncomment. Commented for testing workflows in PR. infrastructure_deploy is not triggered yet
   pull_request:
     paths:
-      - .github/workflows/**  # TODO: temporary to test workflows on PR level, must be deleted after workflows are tested
       - 'infrastructure/src/**'
     branches:
       - main
@@ -36,7 +33,6 @@ jobs:
         working-directory: ${{ env.CODE_PATH }}
         env:
           ARM_ACCESS_KEY: ${{ secrets.ARM_ACCESS_KEY }}
-          ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
         run: |
           terraform init -backend-config=resource_group_name=${{ vars.TF_BACKEND_RESOURCE_GROUP_NAME }} \
             -backend-config=storage_account_name=${{ vars.TF_BACKEND_STORAGE_ACCOUNT_NAME }} \
