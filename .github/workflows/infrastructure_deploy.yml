@@ -7,7 +7,12 @@ on:
       - 'infrastructure/src/**'
     branches:
       - main
-      - feature/1-add-infrastructure-and-workflow
+  pull_request:
+    paths:
+      - .github/workflows/infrastructure_deploy.yml
+    branches:
+      - main
+
 jobs:
   deploy:
     environment:
@@ -15,8 +20,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: artifact
-        uses: actions/download-artifact@v3
+        uses: dawidd6/action-download-artifact@v2
+        # uses: actions/download-artifact@v3
         with:
+          workflow: infrastructure_build.yml
           name: terraform-plan
       - name: terraform apply
         run: |
