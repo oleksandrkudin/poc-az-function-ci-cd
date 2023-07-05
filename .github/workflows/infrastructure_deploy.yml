@@ -1,23 +1,54 @@
 name: 'infrastructure deploy'
 run-name: 'infrastructure deploy'
+env:
+  CODE_PATH: infrastructure/src
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - 'infrastructure/src/**'
+  # deploy must be triggered only based on build pipeline only
+  # bug: not triggered, may be it is not triggered because there is PR, and build pipeline triggered by PR and push is skipped?
+  # Looks like workflow must be in default branch (main, master)
+  workflow_run:
+    workflows:
+      - 'infrastructure build'
+    types: [completed]  # not triggered so far 
+    # necessary to specify - otherwise not triggered
     branches:
       - main
-      - feature/1-add-infrastructure-and-workflow
+
+# how to set dependency on build workflow, so it run first, produce artifact and only after that run deploy workflow?
 jobs:
   deploy:
     environment:
       name: dev
+    # how to set capabilities for agent like terraform version = 1.5.2?
     runs-on: ubuntu-latest
     steps:
+      - name: checkout
+        uses: actions/checkout@v3
       - name: artifact
-        uses: actions/download-artifact@v3
+        uses: dawidd6/action-download-artifact@v2
+        # uses: actions/download-artifact@v3
         with:
+          workflow: infrastructure_build.yml
           name: terraform-plan
+          path: ${{ env.CODE_PATH }}
+      - uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.2.5  # TODO: Move terraform version to repository variable to be global across all workflows
+      - name: terraform init
+        working-directory: ${{ env.CODE_PATH }}
+        env:
+          ARM_ACCESS_KEY: ${{ secrets.ARM_ACCESS_KEY }}
+        run: |
+          terraform init -backend-config=resource_group_name=${{ vars.TF_BACKEND_RESOURCE_GROUP_NAME }} \
+            -backend-config=storage_account_name=${{ vars.TF_BACKEND_STORAGE_ACCOUNT_NAME }} \
+            -backend-config=container_name=${{ vars.TF_BACKEND_CONTAINER_NAME }}  -backend-config=key=${{ vars.TF_BACKEND_KEY }}
       - name: terraform apply
+        working-directory: ${{ env.CODE_PATH }}
+        env:
+          ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+          ARM_CLIENT_ID: ${{ vars.ARM_CLIENT_ID }}
+          ARM_SUBSCRIPTION_ID: ${{ vars.ARM_SUBSCRIPTION_ID }}
+          ARM_TENANT_ID: ${{ vars.ARM_TENANT_ID }}
         run: |
           terraform apply -auto-approve -input=false terraform.tfplan
