@@ -1,0 +1,30 @@
+name: 'application deploy'
+run-name: 'application deploy'
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows:
+      - application build
+    types: [completed]
+    branches:
+      - main
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: dev
+    steps:
+      - name: artifact
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          workflow: infrastructure_build.yml
+          name: package
+      - name: az login
+        run: az login --service-principal --tenant ${{ vars.ARM_TENANT_ID }} --username ${{ vars.ARM_CLIENT_ID }} --password ${{ secrets.ARM_CLIENT_SECRET }}
+      - name: set subscription
+        run: az account set --subscription ${{ vars.ARM_SUBSCRIPTION_ID }}
+      - name: deploy
+        uses: Azure/functions-action@v1
+        with:
+          app-name: az_function
+          package: az_function.1.0.0.nupkg
