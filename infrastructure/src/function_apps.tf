@@ -11,8 +11,9 @@ resource "azurerm_linux_function_app" "example" {
   functions_extension_version = "~4"
 
   site_config {
-    # application_stack {
-    #   dotnet_version = "6.0"
-    # }
+    application_stack {
+      dotnet_version = "6.0"
+      use_dotnet_isolated_runtime = true
+    }
   }
 }
