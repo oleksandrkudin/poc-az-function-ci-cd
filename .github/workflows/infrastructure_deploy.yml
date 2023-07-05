@@ -2,21 +2,20 @@ name: 'infrastructure deploy'
 run-name: 'infrastructure deploy'
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - 'infrastructure/src/**'
-    branches:
-      - main
-  pull_request:
-    paths:
-      - .github/workflows/infrastructure_deploy.yml
-    branches:
-      - main
+  # deploy must be triggered only based on build pipeline only
+  workflow_run:
+    workflows:
+      - 'infrastructure build'
+    # TODO: uncomment. Commented for testing workflows in PR
+    # branches:
+    #   - main
 
+# how to set dependency on build workflow, so it run first, produce artifact and only after that run deploy workflow
 jobs:
   deploy:
     environment:
       name: dev
+    # how to set capabilities for agent like terraform version = 1.5.2?
     runs-on: ubuntu-latest
     steps:
       - name: artifact
@@ -25,6 +24,9 @@ jobs:
         with:
           workflow: infrastructure_build.yml
           name: terraform-plan
+      - uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.2.5  # TODO: Move terraform version to repository variable to be global across all workflows
       - name: terraform apply
         run: |
           terraform apply -auto-approve -input=false terraform.tfplan

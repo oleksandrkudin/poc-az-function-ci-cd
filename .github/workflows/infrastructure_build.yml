@@ -11,6 +11,7 @@ on:
       - main
   pull_request:
     paths:
+      - .github/workflows/**  # TODO: temporary to test workflows on PR level, must be deleted after workflows are tested
       - 'infrastructure/src/**'
     branches:
       - main
@@ -26,6 +27,9 @@ jobs:
       - name: env
         run: |
           env
+      - uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.2.5  # TODO: Move terraform version to repository variable to be global across all workflows
       - name: terraform init
         working-directory: ${{ env.CODE_PATH }}
         env:
