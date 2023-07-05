@@ -17,7 +17,7 @@ jobs:
       - name: artifact
         uses: dawidd6/action-download-artifact@v2
         with:
-          workflow: infrastructure_build.yml
+          workflow: application_build.yml
           name: package
       - name: az login
         run: az login --service-principal --tenant ${{ vars.ARM_TENANT_ID }} --username ${{ vars.ARM_CLIENT_ID }} --password ${{ secrets.ARM_CLIENT_SECRET }}
