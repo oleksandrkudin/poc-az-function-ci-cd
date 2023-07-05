@@ -6,9 +6,10 @@ on:
   workflow_run:
     workflows:
       - 'infrastructure build'
-    # TODO: uncomment. Commented for testing workflows in PR
-    # branches:
-    #   - main
+    # necessary to specify - otherwise not triggered
+    branches:
+      - main
+      - bugfix/**  # TODO: uncomment. Commented for testing workflows in PR
 
 # how to set dependency on build workflow, so it run first, produce artifact and only after that run deploy workflow
 jobs:
