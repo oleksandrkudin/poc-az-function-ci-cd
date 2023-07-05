@@ -1,8 +1,11 @@
 name: 'infrastructure deploy'
 run-name: 'infrastructure deploy'
+env:
+  CODE_PATH: infrastructure/src
 on:
   workflow_dispatch:
   # deploy must be triggered only based on build pipeline only
+  # bug: not triggered, may be it is not triggered because there is PR, and build pipeline triggered by PR and push is skipped?
   workflow_run:
     workflows:
       - 'infrastructure build'
@@ -30,5 +33,13 @@ jobs:
         with:
           terraform_version: 1.2.5  # TODO: Move terraform version to repository variable to be global across all workflows
       - name: terraform apply
+        working-directory: ${{ env.CODE_PATH }}
+        env:
+          ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+          ARM_CLIENT_ID: ${{ vars.ARM_CLIENT_ID }}
+          ARM_SUBSCRIPTION_ID: ${{ vars.ARM_SUBSCRIPTION_ID }}
+          ARM_TENANT_ID: ${{ vars.ARM_TENANT_ID }}
+          TF_VAR_location: ${{ vars.TF_VAR_LOCATION }}
+          TF_VAR_name_prefix: ${{ vars.TF_VAR_NAME_PREFIX }}
         run: |
           terraform apply -auto-approve -input=false terraform.tfplan
