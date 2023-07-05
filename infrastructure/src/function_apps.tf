@@ -14,6 +14,7 @@ resource "azurerm_linux_function_app" "example" {
     application_stack {
       dotnet_version = "6.0"
       use_dotnet_isolated_runtime = true
+      use_32_bit_worker = true
     }
   }
 }
