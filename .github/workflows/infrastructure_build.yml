@@ -46,8 +46,7 @@ jobs:
           echo "Run terraform plan"
           terraform plan -out terraform.tfplan
       - name: artifact
-        working-directory: ${{ env.CODE_PATH }}
         uses: actions/upload-artifact@v3
         with:
           name: terraform-plan
-          path: terraform.tfplan
+          path: ${{ env.CODE_PATH }}/terraform.tfplan
