@@ -41,4 +41,8 @@ resource "azurerm_function_app" "function_app" {
     use_32_bit_worker_process = true
     ftps_state = "FtpsOnly"
   }
+
+  app_settings {
+    FUNCTIONS_WORKER_RUNTIME = "dotnet-isolated"
+  }
 }
