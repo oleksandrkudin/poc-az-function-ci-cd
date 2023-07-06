@@ -11,8 +11,11 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        environment: [dev, prod]
     environment:
-      name: dev
+      name: ${{ matrix.environment }}
     steps:
       - name: artifact
         uses: dawidd6/action-download-artifact@v2
