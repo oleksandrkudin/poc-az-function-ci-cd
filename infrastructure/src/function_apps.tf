@@ -36,7 +36,8 @@ resource "azurerm_function_app" "function_app" {
   version                    = "~4"
 
   site_config {
-    dotnet_framework_version = "v6.0"
+    dotnet_framework_version = "v4.0"
+    linux_fx_version = "DOTNET-ISOLATED|6.0"
     use_32_bit_worker_process = true
     ftps_state = "FtpsOnly"
   }

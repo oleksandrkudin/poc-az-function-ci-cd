@@ -14,6 +14,7 @@ on:
     # necessary to specify - otherwise not triggered
     branches:
       - main
+# how to set condition to run only if build is succeded?
 
 # how to set dependency on build workflow, so it run first, produce artifact and only after that run deploy workflow?
 jobs:
