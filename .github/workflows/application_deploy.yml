@@ -11,8 +11,11 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        environment: [dev, prod]
     environment:
-      name: dev
+      name: ${{ matrix.environment }}
     steps:
       - name: artifact
         uses: dawidd6/action-download-artifact@v2
@@ -26,5 +29,6 @@ jobs:
       - name: deploy
         uses: Azure/functions-action@v1
         with:
-          app-name: az_function
-          package: az_function.1.0.0.nupkg
+          app-name: ${{ vars.FUNCTION_APP_NAME }}
+          package: ./
+          # package: az_function.1.0.0.nupkg

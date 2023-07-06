@@ -9,6 +9,8 @@ on:
     branches:
       - main
   pull_request:
+    paths:
+      - application/src/az_function/**
     branches:
       - main
 jobs:
@@ -25,13 +27,19 @@ jobs:
       - name: dependencies
         run: dotnet restore
       - name: build
-        run: dotnet build --configuration Release --no-restore
+        run: dotnet build --configuration Release --no-restore --output ./output
       - name: test
         run: dotnet test --no-restore --verbosity normal
-      - name: pack
-        run: dotnet pack --configuration Release
       - name: artifact
         uses: actions/upload-artifact@v3
         with:
           name: package
-          path: ${{ env.CODE_PATH }}/bin/Release/*.nupkg
+          path: ${{ env.CODE_PATH }}/output/*
+
+      # - name: pack
+      #   run: dotnet pack --configuration Release
+      # - name: artifact
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: package
+      #     path: ${{ env.CODE_PATH }}/bin/Release/*.nupkg
