@@ -37,9 +37,13 @@ resource "azurerm_function_app" "function_app" {
 
   site_config {
     dotnet_framework_version = "v4.0"
-    linux_fx_version = "dotnet-isolated|6.0"
+    linux_fx_version = "DOTNET-ISOLATED|6.0"
     use_32_bit_worker_process = true
     ftps_state = "FtpsOnly"
+    app_scale_limit = 200
+    cors {
+      allowed_origins = ["https://portal.azure.com"]
+    }
   }
 
   app_settings = {
