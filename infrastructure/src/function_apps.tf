@@ -16,5 +16,6 @@ resource "azurerm_linux_function_app" "example" {
       use_dotnet_isolated_runtime = true
     }
     use_32_bit_worker = true
+    ftps_state = "FtpsOnly"
   }
 }
