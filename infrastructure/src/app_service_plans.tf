@@ -4,4 +4,5 @@ resource "azurerm_service_plan" "function_plan" {
   location            = var.location
   os_type             = "Linux"
   sku_name            = "Y1"
+  reserved            = true
 }
