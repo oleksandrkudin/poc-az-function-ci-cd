@@ -9,6 +9,8 @@ on:
     branches:
       - main
   pull_request:
+    paths:
+      - application/src/az_function/**
     branches:
       - main
 jobs:
