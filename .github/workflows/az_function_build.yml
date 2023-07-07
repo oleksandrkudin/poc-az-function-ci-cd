@@ -39,3 +39,10 @@ jobs:
         with:
           name: ${{ inputs.artifact_name }}
           path: ${{ inputs.code_path }}/output/*
+  build_node:
+    if: inputs.runtime == 'node'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fake
+        run:
+          echo "Check if whole workflow works when dependency on whole job, but that job has nested jobs where only one run and others are skipped."
