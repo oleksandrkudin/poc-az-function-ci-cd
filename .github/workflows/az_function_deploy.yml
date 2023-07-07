@@ -44,7 +44,7 @@ jobs:
           cat $CONFIG_FILE
           echo az_tenant_id=${{ steps.config.outputs.az_tenant_id }}=$(cat $CONFIG_FILE | jq -r .environments.${{ inputs.environment }}.az_tenant_id)
           echo az_subscription_id=${{ steps.config.outputs.az_subscription_id }}=$(cat $CONFIG_FILE | jq -r .environments.${{ inputs.environment }}.az_subscription_id)
-          echo function_app_names=${{ steps.config.outputs.function_app_names }}
+          echo function_app_names="${{ steps.config.outputs.function_app_names }}"
           cat $CONFIG_FILE | jq -r .environments.${{ inputs.environment }}.function_app_names
 
   deploy:
