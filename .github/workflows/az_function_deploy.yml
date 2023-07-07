@@ -50,6 +50,7 @@ jobs:
 
   deploy:
     name: deploy_${{ inputs.environment }} (${{ matrix.function_app }})
+    if: needs.config.outputs.function_app_names != ''
     runs-on: ubuntu-latest
     needs: config
     strategy:
