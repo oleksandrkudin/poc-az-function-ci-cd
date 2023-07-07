@@ -55,7 +55,7 @@ jobs:
     needs: config
     strategy:
       matrix:
-        function_app: ${{ needs.config.outputs.function_app_names != '' && fromJSON(needs.config.outputs.function_app_names) || fromJson('[]') }}
+        function_app: ${{ needs.config.outputs.function_app_names != '' && fromJSON(needs.config.outputs.function_app_names) || fromJson('["skip_deployment"]') }}
     environment:
       name: ${{ inputs.environment }}
     steps:
