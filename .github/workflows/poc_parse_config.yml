@@ -24,10 +24,10 @@ jobs:
     runs-on: ubuntu-latest
     needs: config
     env:
-      az_client_id: ${{ fromJson(needs.config.outputs.config).environments.pre_prod.az_client_id }}
+      az_tenant_id: ${{ fromJson(needs.config.outputs.config).environments.pre_prod.az_tenant_id }}
       function_app_names: ${{ toJson(fromJson(needs.config.outputs.config).environments.pre_prod.function_app_names) }}
     steps:
       - name: print
         run: |
-          echo az_client_id=$AZ_CLIENT_ID
-          echo function_app_names=$FUNCTION_APP_NAMES
+          echo az_tenant_id=$az_tenant_id
+          echo function_app_names=$function_app_names
