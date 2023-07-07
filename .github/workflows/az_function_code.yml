@@ -16,7 +16,8 @@ on:
 jobs:
   build_and_deploy:
     uses: ./.github/workflows/az_function.yml
-    secrets: inherit
+    secrets:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     with:
       code_path: application/src/az_function
       runtime: dotnet

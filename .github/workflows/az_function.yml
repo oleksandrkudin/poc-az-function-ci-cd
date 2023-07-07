@@ -24,7 +24,8 @@ jobs:
     needs: build
     if: github.ref_name == 'main' && github.event_name == 'push'
     uses: ./.github/workflows/az_function_deploy.yml
-    secrets: inherit
+    secrets:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     with:
       code_path: ${{ inputs.code_path }}
       environment: pre_prod
@@ -32,6 +33,8 @@ jobs:
     needs: deploy_pre_prod
     if: github.ref_name == 'main' && github.event_name == 'push'
     uses: ./.github/workflows/az_function_deploy.yml
+    secrets:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     with:
       code_path: ${{ inputs.code_path }}
       environment: prod
