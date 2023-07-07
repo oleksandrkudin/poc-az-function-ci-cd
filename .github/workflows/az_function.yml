@@ -1,5 +1,5 @@
-name: 'azure-function'
-run-name: 'azure-function ${{ inputs.code_path }}'
+name: 'az_function'
+run-name: 'az_function ${{ inputs.code_path }}'
 on:
   workflow_call:
     inputs:

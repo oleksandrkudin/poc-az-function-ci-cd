@@ -15,7 +15,7 @@ jobs:
         run: |
           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
           echo "config<<$EOF" >> $GITHUB_OUTPUT
-          cat application/src/az_function/.workflows/config.json
+          cat application/src/az_function/.workflows/config.json >> $GITHUB_OUTPUT
           echo "$EOF" >> $GITHUB_OUTPUT
       - name: Print config output
         run: |
