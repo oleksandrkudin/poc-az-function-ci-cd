@@ -6,9 +6,6 @@ on:
       code_path:
         type: string
         required: true
-      client_id:
-        type: string
-        required: true
       artifact_name:
         type: string
         default: azure_function
@@ -54,7 +51,7 @@ jobs:
         with:
           name: ${{ inputs.artifact_name }}
       - name: Run az login
-        run: az login --service-principal --tenant ${{ needs.config.outputs.tenant_id }} --username ${{ inputs.client_id }} --password ${{ secrets.client_secret }}
+        run: az login --service-principal --tenant ${{ needs.config.outputs.tenant_id }} --username ${{ vars.CLIENT_ID }} --password ${{ secrets.client_secret }}
       - name: Set subscription
         run: az account set --subscription ${{ needs.config.outputs.subscription_id }}
       - name: Deploy
