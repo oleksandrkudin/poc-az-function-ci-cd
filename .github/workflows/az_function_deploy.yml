@@ -12,9 +12,6 @@ on:
       environment:
         type: string
         required: true
-    secrets:
-      client_secret:
-        required: true
 
 jobs:
   config:
@@ -23,8 +20,8 @@ jobs:
       run:
         working-directory: ${{ inputs.code_path }}
     outputs:
-      tenant_id: ${{ steps.config.outputs.tenant_id }}
-      subscription_id: ${{ steps.config.outputs.subscription_id }}
+      az_tenant_id: ${{ steps.config.outputs.az_tenant_id }}
+      az_subscription_id: ${{ steps.config.outputs.az_subscription_id }}
       function_app_names: ${{ steps.config.outputs.function_app_names }}
     steps:
       - uses: actions/checkout@v3
@@ -33,8 +30,8 @@ jobs:
         env:
           CONFIG_FILE: .workflows/config.json
         run: |
-          echo "tenant_id=$(cat $CONFIG_FILE | jq -r .environment.${{ inputs.environment }}.tenant_id)" >> $GITHUB_OUTPUT
-          echo "subscription_id=$(cat $CONFIG_FILE | jq -r .environment.${{ inputs.environment }}.subscription_id)" >> $GITHUB_OUTPUT
+          echo "az_tenant_id=$(cat $CONFIG_FILE | jq -r .environment.${{ inputs.environment }}.az_tenant_id)" >> $GITHUB_OUTPUT
+          echo "az_subscription_id=$(cat $CONFIG_FILE | jq -r .environment.${{ inputs.environment }}.az_subscription_id)" >> $GITHUB_OUTPUT
           echo "function_app_names=$(cat $CONFIG_FILE | jq -r .environment.${{ inputs.environment }}.function_app_names)" >> $GITHUB_OUTPUT
 
   deploy:
@@ -51,9 +48,9 @@ jobs:
         with:
           name: ${{ inputs.artifact_name }}
       - name: Run az login
-        run: az login --service-principal --tenant ${{ needs.config.outputs.tenant_id }} --username ${{ vars.CLIENT_ID }} --password ${{ secrets.client_secret }}
+        run: az login --service-principal --tenant ${{ needs.config.outputs.az_tenant_id }} --username ${{ vars.AZ_CLIENT_ID }} --password ${{ secrets.AZ_CLIENT_SECRET }}
       - name: Set subscription
-        run: az account set --subscription ${{ needs.config.outputs.subscription_id }}
+        run: az account set --subscription ${{ needs.config.outputs.az_subscription_id }}
       - name: Deploy
         uses: Azure/functions-action@v1
         with:
