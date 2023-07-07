@@ -61,7 +61,7 @@ jobs:
         with:
           name: ${{ inputs.artifact_name }}
       - name: Run az login
-        run: az login --service-principal --tenant ${{ needs.config.outputs.az_tenant_id }} --username ${{ vars.AZ_CLIENT_ID }} --password ${{ secrets.AZ_CLIENT_SECRET }}
+        run: az login --service-principal --tenant ${{ needs.config.outputs.az_tenant_id }} --username ${{ vars.AZ_CLIENT_ID }} --password "${{ secrets.AZ_CLIENT_SECRET }}"
       - name: Set subscription
         run: az account set --subscription ${{ needs.config.outputs.az_subscription_id }}
       - name: Deploy
