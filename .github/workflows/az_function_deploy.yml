@@ -49,7 +49,7 @@ jobs:
           cat $CONFIG_FILE | jq -r .environments.${{ inputs.environment }}.function_app_names
 
   deploy:
-    name: deploy_${{ inputs.environment }}
+    name: deploy_${{ inputs.environment }} (${{ matrix.function_app }})
     runs-on: ubuntu-latest
     needs: config
     strategy:
