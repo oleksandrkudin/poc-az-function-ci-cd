@@ -1,0 +1,14 @@
+{
+  "environments": {
+    "pre_prod": {
+      "tenant_id": "softserveinc.onmicrosoft.com",
+      "subscription_id": "7c71d46b-2bc6-4d0c-a0ef-4ec11848e975",
+      "function_app_names": ["poc-azfunccicd-func"]
+    },
+    "prod": {
+      "tenant_id": "softserveinc.onmicrosoft.com",
+      "subscription_id": "7c71d46b-2bc6-4d0c-a0ef-4ec11848e975",
+      "function_app_names": ["okuditestfuncapp"]
+    }
+  }  
+}

@@ -1,0 +1,36 @@
+name: 'azure-function'
+run-name: 'azure-function ${{ inputs.code_path }}'
+on:
+  workflow_call:
+    inputs:
+      code_path:
+        type: string
+        required: true
+      runtime:
+        type: string
+        default: dotnet
+      dotnet_version:
+        type: string
+        default: 6.0.x
+
+jobs:
+  build:
+    uses: ./.github/workflows/az_function_build.yml
+    with:
+      code_path: ${{ inputs.code_path }}
+      runtime: ${{ inputs.runtime }}
+      dotnet_version: ${{ inputs.dotnet_version }}
+  deploy_pre_prod:
+    needs: build
+    if: github.ref_name == 'main' && github.event == 'push'
+    uses: ./.github/workflows/az_function_deploy.yml
+    with:
+      code_path: ${{ inputs.code_path }}
+      environment: pre_prod
+  deploy_prod:
+    needs: deploy_pre_prod
+    if: github.ref_name == 'main' && github.event == 'push'
+    uses: ./.github/workflows/az_function_deploy.yml
+    with:
+      code_path: ${{ inputs.code_path }}
+      environment: prod

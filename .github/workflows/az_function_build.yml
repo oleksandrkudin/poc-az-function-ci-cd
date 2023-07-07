@@ -1,0 +1,41 @@
+name: 'az_function_build'
+run-name: 'az_function_build ${{ inputs.code_path }}'
+on:
+  workflow_call:
+    inputs:
+      code_path:
+        type: string
+        default: ./
+      runtime:
+        type: string
+        default: dotnet
+      dotnet_version:
+        type: string
+        default: 6.0.x
+      artifact_name:
+        type: string
+        default: azure_function
+jobs:
+  build_dotnet:
+    if: inputs.runtime == 'dotnet'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ inputs.code_path }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set ${{ inputs.dotnet_version }} dotnet version
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: ${{ inputs.dotnet_version }}
+      - name: Resolve dependencies
+        run: dotnet restore
+      - name: Build
+        run: dotnet build --configuration Release --no-restore --output ./output
+      - name: Test
+        run: dotnet test --no-restore --verbosity normal
+      - name: Push artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ inputs.artifact_name }}
+          path: ${{ inputs.code_path }}/output/*

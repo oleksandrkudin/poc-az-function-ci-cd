@@ -1,0 +1,64 @@
+name: 'az_function_deploy'
+run-name: 'az_function_deploy ${{ inputs.code_path }}'
+on:
+  workflow_call:
+    inputs:
+      code_path:
+        type: string
+        required: true
+      client_id:
+        type: string
+        required: true
+      artifact_name:
+        type: string
+        default: azure_function
+      environment:
+        type: string
+        required: true
+    secrets:
+      client_secret:
+        required: true
+
+jobs:
+  config:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ inputs.code_path }}
+    outputs:
+      tenant_id: ${{ steps.config.outputs.tenant_id }}
+      subscription_id: ${{ steps.config.outputs.subscription_id }}
+      function_app_names: ${{ steps.config.outputs.function_app_names }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Config
+        id: config
+        env:
+          CONFIG_FILE: .workflows/config.json
+        run: |
+          echo "tenant_id=$(cat $CONFIG_FILE | jq -r .environment.${{ inputs.environment }}.tenant_id)" >> $GITHUB_OUTPUT
+          echo "subscription_id=$(cat $CONFIG_FILE | jq -r .environment.${{ inputs.environment }}.subscription_id)" >> $GITHUB_OUTPUT
+          echo "function_app_names=$(cat $CONFIG_FILE | jq -r .environment.${{ inputs.environment }}.function_app_names)" >> $GITHUB_OUTPUT
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: config
+    strategy:
+      matrix:
+        function_app: ${{ fromJSON(needs.config.outputs.function_app_names) }}
+    environment:
+      name: ${{ inputs.environment }}
+    steps:
+      - name: Get artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: ${{ inputs.artifact_name }}
+      - name: Run az login
+        run: az login --service-principal --tenant ${{ needs.config.outputs.tenant_id }} --username ${{ inputs.client_id }} --password ${{ secrets.client_secret }}
+      - name: Set subscription
+        run: az account set --subscription ${{ needs.config.outputs.subscription_id }}
+      - name: Deploy
+        uses: Azure/functions-action@v1
+        with:
+          app-name: ${{ matrix.function_app }}
+          package: .
