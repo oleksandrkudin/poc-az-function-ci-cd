@@ -50,12 +50,13 @@ jobs:
 
   deploy:
     name: deploy_${{ inputs.environment }} (${{ matrix.function_app }})
-    if: needs.config.outputs.function_app_names != ''
+    if: needs.config.outputs.function_app_names != null
     runs-on: ubuntu-latest
     needs: config
     strategy:
       matrix:
-        function_app: ${{ needs.config.outputs.function_app_names != '' && fromJSON(needs.config.outputs.function_app_names) || fromJson('["skip_deployment"]') }}
+        # Matrix value cannot be empty even if job does not run based on condition. Matrix value is evaluated despite job condition and error is raised in case it is empty. 
+        function_app: ${{ fromJSON(needs.config.outputs.function_app_names) }}
     environment:
       name: ${{ inputs.environment }}
     steps:
