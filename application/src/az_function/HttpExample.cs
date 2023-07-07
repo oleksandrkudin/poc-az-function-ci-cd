@@ -22,7 +22,7 @@ namespace az_function
             var response = req.CreateResponse(HttpStatusCode.OK);
             response.Headers.Add("Content-Type", "text/plain; charset=utf-8");
 
-            response.WriteString("Welcome Oleksandr Kudin to Azure Functions version 2!");
+            response.WriteString("Welcome Oleksandr Kudin to Azure Functions version 3!");
 
             return response;
         }

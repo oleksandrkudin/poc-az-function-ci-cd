@@ -36,6 +36,14 @@ jobs:
           echo "function_app_names<<$EOF" >> $GITHUB_OUTPUT
           cat $CONFIG_FILE | jq -r .environment.${{ inputs.environment }}.function_app_names >> $GITHUB_OUTPUT
           echo "$EOF" >> $GITHUB_OUTPUT
+      - name: Debug
+        env:
+          CONFIG_FILE: .workflows/config.json
+        run: |
+          echo config_file=$CONFIG_FILE
+          echo az_tenant_id=${{ steps.config.outputs.az_tenant_id }}
+          echo az_tenant_id=${{ steps.config.outputs.az_subscription_id }}
+          echo az_tenant_id=${{ steps.config.outputs.function_app_names }} 
 
   deploy:
     runs-on: ubuntu-latest
