@@ -17,6 +17,7 @@ on:
         default: azure_function
 jobs:
   build_dotnet:
+    name: Build ${{ inputs.runtime }}
     if: inputs.runtime == 'dotnet'
     runs-on: ubuntu-latest
     defaults:

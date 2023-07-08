@@ -15,12 +15,14 @@ on:
 
 jobs:
   build:
+    name: Build
     uses: ./.github/workflows/az_function_build.yml
     with:
       code_path: ${{ inputs.code_path }}
       runtime: ${{ inputs.runtime }}
       dotnet_version: ${{ inputs.dotnet_version }}
   deploy_pre_prod:
+    name: Deploy pre_prod
     needs: build
     if: github.ref_name == 'main' && github.event_name == 'push'
     uses: ./.github/workflows/az_function_deploy.yml
@@ -29,6 +31,7 @@ jobs:
       code_path: ${{ inputs.code_path }}
       environment: pre_prod
   deploy_prod:
+    name: Deploy prod
     needs: deploy_pre_prod
     if: github.ref_name == 'main' && github.event_name == 'push'
     uses: ./.github/workflows/az_function_deploy.yml
