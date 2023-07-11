@@ -2,13 +2,22 @@
   "environments": {
     "pre_prod": {
       "az_tenant_id": "softserveinc.onmicrosoft.com",
-      "az_subscription_id": "7c71d46b-2bc6-4d0c-a0ef-4ec11848e975",
-      "function_app_names": ["poc-azfunccicd-func"]
+      "function_apps": [
+        {
+          "az_subscription_id": "7c71d46b-2bc6-4d0c-a0ef-4ec11848e975",
+          "function_app_name": "poc-azfunccicd-func"
+        }
+      ]
+      
     },
     "prod": {
       "az_tenant_id": "softserveinc.onmicrosoft.com",
-      "az_subscription_id": "7c71d46b-2bc6-4d0c-a0ef-4ec11848e975",
-      "function_app_names": ["okuditestfuncapp"]
+      "function_apps": [
+        {
+          "az_subscription_id": "7c71d46b-2bc6-4d0c-a0ef-4ec11848e975",
+          "function_app_name": "okuditestfuncapp"
+        }
+      ]
     }
-  }  
+  }
 }
