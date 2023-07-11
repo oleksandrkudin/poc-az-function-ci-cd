@@ -25,9 +25,13 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Set ${{ inputs.dotnet_version }} dotnet version
+        id: dotnet_version
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: ${{ inputs.dotnet_version }}
+      - name: Create temporary global.json
+        run: |
+          echo '{"sdk":{"version": "${{ steps.dotnet_version.outputs.dotnet-version }}"}}' > ./global.json
       - name: Check dotnet version
         run: dotnet --version
       - name: Resolve dependencies
