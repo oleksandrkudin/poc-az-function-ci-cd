@@ -28,6 +28,8 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: ${{ inputs.dotnet_version }}
+      - name: Check dotnet version
+        run: dotnet --version
       - name: Resolve dependencies
         run: dotnet restore
       - name: Build
