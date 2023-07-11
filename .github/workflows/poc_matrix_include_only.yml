@@ -1,0 +1,18 @@
+name: poc_matrix_include_only
+on:
+  workflow_dispatch:
+jobs:
+  matrix_include_only:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - subscription: 1
+            function_app_name: function_app_01
+          - subscription: 2
+            function_app_name: function_app_02
+    steps:
+      - name: Print matrix value
+        run: |
+          echo subscription=${{ matrix.subscription }}
+          echo function_app_name=${{ matrix.function_app_name }}
