@@ -77,7 +77,7 @@ jobs:
     with:
       code_path: ${{ inputs.code_path }}
       environment: ${{ matrix.environment }}
-      environment_type: non_prod
+      environment_type: non-prod
     strategy:
       matrix:
         environment: ${{ fromJson(needs.config.outputs.non_prod_environments) }}
@@ -89,7 +89,7 @@ jobs:
     with:
       code_path: ${{ inputs.code_path }}
       environment: ${{ matrix.environment }}
-      environment_type: pre_prod
+      environment_type: pre-prod
     strategy:
       matrix:
         environment: ${{ fromJson(needs.config.outputs.pre_prod_environments) }}
