@@ -66,9 +66,9 @@ jobs:
           echo "$EOF" >> $GITHUB_OUTPUT
       - name: List environments
         run: |
-          echo non_prod_environments=${{ steps.config.outputs.non_prod_environments }}
-          echo pre_prod_environments=${{ steps.config.outputs.pre_prod_environments }}
-          echo prod_environments=${{ steps.config.outputs.prod_environments }}
+          echo non_prod_environments="${{ steps.config.outputs.non_prod_environments }}"
+          echo pre_prod_environments="${{ steps.config.outputs.pre_prod_environments }}"
+          echo prod_environments="${{ steps.config.outputs.prod_environments }}"
   deploy_non_prod:
     name: Deploy non_prod
     needs: [build, config]
