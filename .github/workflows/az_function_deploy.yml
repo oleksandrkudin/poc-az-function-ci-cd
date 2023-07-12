@@ -45,11 +45,11 @@ jobs:
           CONFIG_FILE: .workflows/config.json
         run: |
           ls $CONFIG_FILE
-          echo "az_tenant_id=$(cat $CONFIG_FILE | jq -r .environment_types.${{ inputs.environment_type }}.az_tenant_id)" >> $GITHUB_OUTPUT
-          echo "az_subscription_id=$(cat $CONFIG_FILE | jq -r .environment_types.${{ inputs.environment_type }}.environments.${{  inputs.environment }}.az_subscription_id)" >> $GITHUB_OUTPUT
+          echo "az_tenant_id=$(cat $CONFIG_FILE | jq -r '.environment_types."${{ inputs.environment_type }}".az_tenant_id')" >> $GITHUB_OUTPUT
+          echo "az_subscription_id=$(cat $CONFIG_FILE | jq -r '.environment_types."${{ inputs.environment_type }}".environments."${{  inputs.environment }}".az_subscription_id')" >> $GITHUB_OUTPUT
           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
           echo "function_app_names<<$EOF" >> $GITHUB_OUTPUT
-          cat $CONFIG_FILE | jq -r .environment_types.${{ inputs.environment_type }}.environments.${{  inputs.environment }}.function_app_names >> $GITHUB_OUTPUT
+          cat $CONFIG_FILE | jq -r '.environment_types."${{ inputs.environment_type }}".environments."${{  inputs.environment }}".function_app_names' >> $GITHUB_OUTPUT
           echo "$EOF" >> $GITHUB_OUTPUT
       - name: Debug config 
         env:
