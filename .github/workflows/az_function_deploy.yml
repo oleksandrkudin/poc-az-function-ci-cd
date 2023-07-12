@@ -12,7 +12,9 @@ on:
       environment:
         type: string
         required: true
-
+permissions:
+  id-token: write
+  contents: read
 jobs:
   config:
     name: Config ${{ inputs.environment }}
@@ -60,10 +62,16 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: ${{ inputs.artifact_name }}
+      # - name: Run az login
+      #   run: az login --service-principal --tenant ${{ needs.config.outputs.az_tenant_id }} --username ${{ vars.AZ_CLIENT_ID }} --password "${{ secrets.AZ_CLIENT_SECRET }}"
+      # - name: Set subscription
+      #   run: az account set --subscription ${{ matrix.az_subscription_id }}
       - name: Run az login
-        run: az login --service-principal --tenant ${{ needs.config.outputs.az_tenant_id }} --username ${{ vars.AZ_CLIENT_ID }} --password "${{ secrets.AZ_CLIENT_SECRET }}"
-      - name: Set subscription
-        run: az account set --subscription ${{ matrix.az_subscription_id }}
+        uses: azure/login@v1
+        with:
+          client-id: ${{ vars.AZ_CLIENT_ID }}
+          tenant-id: ${{ needs.config.outputs.az_tenant_id }}
+          subscription-id: ${{ matrix.az_subscription_id }}
       - name: Deploy
         uses: Azure/functions-action@v1
         with:
