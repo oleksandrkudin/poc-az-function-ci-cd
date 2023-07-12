@@ -1,20 +1,31 @@
+# Reusable shared workflow to deploy Azure Function build artifact to Azure Function App services based on config.json.
+
 name: 'az_function_deploy'
 run-name: 'az_function_deploy ${{ inputs.code_path }}'
 on:
   workflow_call:
     inputs:
       code_path:
+        description: 'Repository relative path to Azure Function code without starting slash'
         type: string
         required: true
       artifact_name:
+        description: "Name of build artifact"
         type: string
         default: azure_function
-      environment:
+      environment_type:
+        description: "Deployment environment type"
         type: string
         required: true
+      environment:
+        description: "Deployment environment name"
+        type: string
+        required: true
+
 permissions:
   id-token: write
   contents: read
+
 jobs:
   config:
     name: Config ${{ inputs.environment }}
@@ -24,7 +35,8 @@ jobs:
         working-directory: ${{ inputs.code_path }}
     outputs:
       az_tenant_id: ${{ steps.config.outputs.az_tenant_id }}
-      function_apps: ${{ steps.config.outputs.function_apps }}
+      az_subscription_id: ${{ steps.config.outputs.az_subscription_id }}
+      function_app_names: ${{ steps.config.outputs.function_app_names }}
     steps:
       - uses: actions/checkout@v3
       - name: Config
@@ -33,10 +45,11 @@ jobs:
           CONFIG_FILE: .workflows/config.json
         run: |
           ls $CONFIG_FILE
-          echo "az_tenant_id=$(cat $CONFIG_FILE | jq -r .environments.${{ inputs.environment }}.az_tenant_id)" >> $GITHUB_OUTPUT
+          echo "az_tenant_id=$(cat $CONFIG_FILE | jq -r .environment_types.${{ inputs.environment_type }}.az_tenant_id)" >> $GITHUB_OUTPUT
+          echo "az_subscription_id=$(cat $CONFIG_FILE | jq -r .environment_types.${{ inputs.environment_type }}.environments.${{  inputs.environment }}.az_subscription_id)" >> $GITHUB_OUTPUT
           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
-          echo "function_apps<<$EOF" >> $GITHUB_OUTPUT
-          cat $CONFIG_FILE | jq -r .environments.${{ inputs.environment }}.function_apps >> $GITHUB_OUTPUT
+          echo "function_app_names<<$EOF" >> $GITHUB_OUTPUT
+          cat $CONFIG_FILE | jq -r .environment_types.${{ inputs.environment_type }}.environments.${{  inputs.environment }}.function_app_names >> $GITHUB_OUTPUT
           echo "$EOF" >> $GITHUB_OUTPUT
       - name: Debug config 
         env:
@@ -45,16 +58,17 @@ jobs:
           echo config_file=$CONFIG_FILE
           cat $CONFIG_FILE
           echo az_tenant_id=${{ steps.config.outputs.az_tenant_id }}
-          echo function_apps="${{ steps.config.outputs.function_apps }}"
+          echo az_subscription_id=${{ steps.config.outputs.az_subscription_id }}
+          echo function_app_names="${{ steps.config.outputs.function_app_names }}"
 
   deploy:
-    name: Deploy ${{ inputs.environment }} (${{ matrix.function_app_name }}, ${{ matrix.az_subscription_id }})
-    if: needs.config.outputs.function_apps != 'null'
+    name: Deploy ${{ inputs.environment }} (${{ matrix.function_app_name }}, ${{ needs.config.outputs.az_subscription_id }})
+    if: needs.config.outputs.function_app_names != 'null'
     runs-on: ubuntu-latest
     needs: config
     strategy:
       matrix: 
-        include: ${{ fromJSON(needs.config.outputs.function_apps) }}
+        include: ${{ fromJSON(needs.config.outputs.function_app_names) }}
     environment:
       name: ${{ inputs.environment }}
     steps:
@@ -62,16 +76,12 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: ${{ inputs.artifact_name }}
-      # - name: Run az login
-      #   run: az login --service-principal --tenant ${{ needs.config.outputs.az_tenant_id }} --username ${{ vars.AZ_CLIENT_ID }} --password "${{ secrets.AZ_CLIENT_SECRET }}"
-      # - name: Set subscription
-      #   run: az account set --subscription ${{ matrix.az_subscription_id }}
       - name: Run az login
         uses: azure/login@v1
         with:
           client-id: ${{ vars.AZ_CLIENT_ID }}
           tenant-id: ${{ needs.config.outputs.az_tenant_id }}
-          subscription-id: ${{ matrix.az_subscription_id }}
+          subscription-id: ${{ needs.config.outputs.az_subscription_id }}
       - name: Deploy
         uses: Azure/functions-action@v1
         with:

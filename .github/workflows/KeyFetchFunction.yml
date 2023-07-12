@@ -1,26 +1,31 @@
-name: az_function_code
-run-name: az_function_code
+# The workflow to build and deploy "KeyFetchFunction" Azure Function to Azure Function App services. 
+
+name: KeyFetchFunction
+run-name: KeyFetchFunction
 on:
   workflow_dispatch:
   push:
     branches:
       - main
     paths:
-      - application/src/az_function/**
+      - Azure/KeyFetchFunction/**
   pull_request:
     branches:
       - main
     paths:
-      - application/src/az_function/**
+      - Azure/KeyFetchFunction/**
+
 permissions:
   id-token: write
   contents: read
+
 jobs:
   build_and_deploy:
     name: Build & deploy
     uses: ./.github/workflows/az_function.yml
     secrets: inherit
     with:
-      code_path: application/src/az_function
+      code_path: Azure/KeyFetchFunction
+      default_branch: main
       runtime: dotnet
       dotnet_version: 6.0.x

@@ -1,22 +1,31 @@
+# Reusable shared workflow to build and deploy any Azure Function code to Azure Function App services.
+
 name: 'az_function'
 run-name: 'az_function ${{ inputs.code_path }}'
 on:
   workflow_call:
     inputs:
       code_path:
+        description: 'Repository relative path to Azure Function code without starting slash'
         type: string
         required: true
+      default_branch:
+        description: 'Repository default branch name'
+        type: string
+        default: main
       runtime:
+        description: 'Azure Function code languague runtime'
         type: string
         default: dotnet
       dotnet_version:
+        description: 'Version of .Net runtime'
         type: string
         default: 6.0.x
 
 permissions:
   id-token: write
   contents: read
-        
+
 jobs:
   build:
     name: Build
@@ -25,21 +34,76 @@ jobs:
       code_path: ${{ inputs.code_path }}
       runtime: ${{ inputs.runtime }}
       dotnet_version: ${{ inputs.dotnet_version }}
+  config:
+    name: Config environments
+    runs-on: ubuntu-latest
+    if: github.ref_name == inputs.default_branch && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    outputs:
+      non_prod_environments: ${{ steps.config.outputs.non_prod_environments }}
+      pre_prod_environments: ${{ steps.config.outputs.pre_prod_environments }}
+      prod_environments: ${{ steps.config.outputs.prod_environments }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Config environments
+        id: config
+        working-directory: ${{ inputs.code_path }}
+        env:
+          CONFIG_FILE: .workflows/config.json
+        run: |
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "non_prod_environments<<$EOF" >> $GITHUB_OUTPUT
+          echo $(cat $CONFIG_FILE | jq -r .environment_types.non-prod.environments | jq -r keys) >> $GITHUB_OUTPUT
+          echo "$EOF" >> $GITHUB_OUTPUT
+
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "pre_prod_environments<<$EOF" >> $GITHUB_OUTPUT
+          echo $(cat $CONFIG_FILE | jq -r .environment_types.pre-prod.environments | jq -r keys) >> $GITHUB_OUTPUT
+          echo "$EOF" >> $GITHUB_OUTPUT
+
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "prod_environments<<$EOF" >> $GITHUB_OUTPUT
+          echo $(cat $CONFIG_FILE | jq -r .environment_types.prod.environments | jq -r keys) >> $GITHUB_OUTPUT
+          echo "$EOF" >> $GITHUB_OUTPUT
+      - name: List environments
+        run: |
+          echo config_file=$CONFIG_FILE
+          cat $CONFIG_FILE
+          echo non_prod_environments=${{ steps.config.outputs.non_prod_environments }}
+          echo pre_prod_environments=${{ steps.config.outputs.pre_prod_environments }}
+          echo prod_environments=${{ steps.config.outputs.prod_environments }}
+  deploy_non_prod:
+    name: Deploy non_prod
+    needs: [build, config]
+    uses: ./.github/workflows/az_function_deploy.yml
+    secrets: inherit
+    with:
+      code_path: ${{ inputs.code_path }}
+      environment: ${{ matrix.environment }}
+      environment_type: non_prod
+    strategy:
+      matrix:
+        environment: ${{ fromJson(needs.config.outputs.non_prod_environments) }}
   deploy_pre_prod:
     name: Deploy pre_prod
-    needs: build
-    if: github.ref_name == 'main' && github.event_name == 'push'
+    needs: [config, deploy_non_prod]
     uses: ./.github/workflows/az_function_deploy.yml
     secrets: inherit
     with:
       code_path: ${{ inputs.code_path }}
-      environment: pre_prod
+      environment: ${{ matrix.environment }}
+      environment_type: pre_prod
+    strategy:
+      matrix:
+        environment: ${{ fromJson(needs.config.outputs.pre_prod_environments) }}
   deploy_prod:
     name: Deploy prod
-    needs: deploy_pre_prod
-    if: github.ref_name == 'main' && github.event_name == 'push'
+    needs: [config, deploy_pre_prod]
     uses: ./.github/workflows/az_function_deploy.yml
     secrets: inherit
     with:
       code_path: ${{ inputs.code_path }}
-      environment: prod
+      environment: ${{ matrix.environment }}
+      environment_type: prod
+    strategy:
+      matrix:
+        environment: ${{ fromJson(needs.config.outputs.prod_environments) }}
