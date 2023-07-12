@@ -1,0 +1,17 @@
+name: poc_child_matrix
+on:
+  workflow_call:
+    inputs:
+      environment:
+        type: string
+        required: true
+jobs:
+  child_matrix:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        function_app: [app-01, app-02, app-03]
+    steps:
+      - name: Output
+        run: |
+          echo ${{ inputs.environment }} - ${{ matrix.function_app }}
