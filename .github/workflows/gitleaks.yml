@@ -16,4 +16,4 @@ jobs:
           fetch-depth: 0
       - name: Detect leaked secrets
         run: |
-          gitleaks detect -v --log-opts origin/main..HEAD
+          gitleaks detect -v --log-opts origin/main..origin/${{ github.head_ref }}
