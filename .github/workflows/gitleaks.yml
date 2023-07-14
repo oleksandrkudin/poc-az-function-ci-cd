@@ -1,6 +1,8 @@
 name: gitleaks
 on:
   pull_request:
+    branches:
+      - main
 jobs:
   gitleaks:
     name: Gitleaks
@@ -12,8 +14,9 @@ jobs:
           tar -xzf gitleaks_8.17.0_linux_x64.tar.gz
           cp gitleaks /usr/local/bin/
       - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+      - name: Git fetch
+        run: |
+          git fetch --no-tags origin 'refs/heads/main'
       - name: Detect leaked secrets
         run: |
           gitleaks detect -v --log-opts origin/main..HEAD
