@@ -14,4 +14,6 @@ jobs:
       - uses: actions/checkout@v3
       - name: Detect leaked secrets
         run: |
-          gitleaks detect -v --log-opts origin/main..origin/${{ github.head_ref }}
+          ls ./
+          git branch
+          gitleaks detect -v --log-opts origin/main..HEAD
