@@ -2,3 +2,5 @@
 test_github_security/az_storage_account.conf:readme-api-token:5
 test_github_security/az_storage_account.conf:user-custom-password:4
 test_github_security/az_storage_account.conf:user-custom-password:9
+
+67df11907812a55228eb912cdbb8d29e3e46164b:test_github_security/az_storage_account.conf:readme-api-token:11
