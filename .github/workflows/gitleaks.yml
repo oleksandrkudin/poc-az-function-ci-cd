@@ -14,9 +14,11 @@ jobs:
           tar -xzf gitleaks_8.17.0_linux_x64.tar.gz
           cp gitleaks /usr/local/bin/
       - uses: actions/checkout@v3
+        with:
+          ref: refs/heads/${{ github.head_ref }}
       - name: Git fetch
         run: |
-          git fetch --no-tags origin 'refs/heads/main'
+          git fetch --no-tags origin +refs/heads/main
       - name: Detect leaked secrets
         run: |
           gitleaks detect -v --log-opts origin/main..origin/${{ github.head_ref }}
