@@ -17,4 +17,4 @@ jobs:
       - name: Detect leaked secrets
         run: |
           git log origin/main..origin/${{ github.head_ref }} --oneline
-          gitleaks detect -v --log-opts origin/main..origin/HEAD
+          gitleaks detect -v --log-opts origin/main..origin/${{ github.head_ref }}
