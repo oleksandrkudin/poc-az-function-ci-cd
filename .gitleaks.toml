@@ -12,3 +12,12 @@ regex = '''pwd_[[:graph:]]{16}'''
 keywords = [
   "password"
 ]
+
+#[[rules]]
+#description = "Custom user password advanced"
+#id = "user-advanced-custom-password"
+#regex = '''[[:graph:]]{16,64}'''
+#entropy = 4.3
+#keywords = [
+#  "password"
+#]
