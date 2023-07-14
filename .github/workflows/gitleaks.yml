@@ -16,4 +16,4 @@ jobs:
         run: |
           ls ./
           git branch
-          gitleaks detect -v --log-opts origin/main..HEAD
+          gitleaks detect -v --log-opts origin/main..
