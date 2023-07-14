@@ -1,0 +1,11 @@
+name: poc_parent_matrix
+on:
+  workflow_dispatch:
+jobs:
+  parent_matrix:
+    strategy:
+      matrix:
+        environment: [dev, qa, prod]
+    uses: ./.github/workflows/poc_child_matrix.yml
+    with:
+      environment: ${{ matrix.environment }}

@@ -1,18 +1,25 @@
+# Reusable shared workflow to build any Azure Function code.
+# Can be extended with different language runtime on demand.
+
 name: 'az_function_build'
 run-name: 'az_function_build ${{ inputs.code_path }}'
 on:
   workflow_call:
     inputs:
       code_path:
+        description: 'Repository relative path to Azure Function code without starting slash'
         type: string
-        default: ./
+        required: true
       runtime:
+        description: 'Azure Function code languague runtime'
         type: string
         default: dotnet
       dotnet_version:
+        description: 'Version of .Net runtime'
         type: string
         default: 6.0.x
       artifact_name:
+        description: "Name of build artifact"
         type: string
         default: azure_function
 jobs:
@@ -26,9 +33,13 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Set ${{ inputs.dotnet_version }} dotnet version
+        id: dotnet_version
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: ${{ inputs.dotnet_version }}
+      - name: Add dotnet global.json
+        run: |
+          echo '{"sdk":{"version": "${{ steps.dotnet_version.outputs.dotnet-version }}"}}' > ./global.json
       - name: Resolve dependencies
         run: dotnet restore
       - name: Build

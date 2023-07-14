@@ -1,0 +1,17 @@
+name: gitleaks
+on:
+  pull_request:
+jobs:
+  gitleaks:
+    name: Gitleaks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install
+        run: |
+          curl -O https://github.com/gitleaks/gitleaks/releases/download/v8.17.0/gitleaks_8.17.0_linux_x64.tar.gz
+          tar -xzf gitleaks_8.17.0_linux_x64.tar.gz
+          cp gitleaks /usr/local/bin/
+      - uses: actions/checkout@v3
+      - name: Detect leaked secrets
+        run: |
+          gitleaks detect -v --log-opts main..${{ github.ref_name }}
