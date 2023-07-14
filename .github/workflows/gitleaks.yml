@@ -15,11 +15,10 @@ jobs:
           cp gitleaks /usr/local/bin/
       - uses: actions/checkout@v3
         with:
-          ref: ${{ github.head_ref }}
+          ref: main
       - name: Git fetch
         run: |
-          git fetch --no-tags --depth=0 origin +refs/heads/main
-          git fetch --no-tags --depth=0 origin +refs/heads/${{ github.head_ref }} 
+          git fetch --no-tags origin +refs/heads/${{ github.head_ref }} 
       - name: Detect leaked secrets
         run: |
           gitleaks detect -v --log-opts origin/main..origin/${{ github.head_ref }}
