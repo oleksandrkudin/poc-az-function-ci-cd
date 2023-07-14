@@ -14,4 +14,4 @@ jobs:
       - uses: actions/checkout@v3
       - name: Detect leaked secrets
         run: |
-          gitleaks detect -v --log-opts main..${{ github.ref_name }}
+          gitleaks detect -v --log-opts main..${{ github.head_ref }}
