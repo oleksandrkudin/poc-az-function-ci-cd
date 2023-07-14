@@ -1,0 +1,14 @@
+title = "Gitleaks title"
+[extend]
+useDefault = true
+[[rules]]
+description = "Disable aws-access-token rule"
+id = "aws-access-token"
+[[rules]]
+description = "Custom user password"
+id = "user-custom-password"
+#regex = '''pwd_[a-zA-Z0-9]{16}'''
+regex = '''pwd_[[:graph:]]{16}'''
+keywords = [
+  "password"
+]
